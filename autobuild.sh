@@ -79,7 +79,7 @@ cd $START_PATH/SIRIUS/src
 SIRIUS_LD_LIBS=$(make showlibs | sed 's/List of libraries for linking with the Fortran code://g')
 cd $START_PATH/q-e
 #sed -i "/TEXT_TO_BE_REPLACED/c\REPLACEMENT" file
-sed -i "/DFLAGS         =/c\DFLAGS         =  -D__OPENMP -D__FFTW -D__OLDXML -D__MPI -D__SCALAPACK -D__SIRIUS -I$(echo ${START_PATH}/SIRIUS/src | escape_slashes)" make.inc
+sed -i "/DFLAGS         =/c\DFLAGS         =  -D__OPENMP -D__FFTW -D__OLDXML -D__MPI -D__SCALAPACK -D__SIRIUS -I$(echo ${START_PATH}/SIRIUS/src | escape_slashes)" make.inc  # NB: -D__ELPA should also be here, but it's temporarily broken!
 sed -i "s/gfortran/ftn/g" make.inc
 sed -i "/LD_LIBS        =/c\LD_LIBS        = $(echo ${SIRIUS_LD_LIBS} | escape_slashes)" make.inc
 sed -i "/BLAS_LIBS      =/c\BLAS_LIBS      =" make.inc
@@ -99,7 +99,7 @@ else
     echo "WARNING: missing dependency on CUDA dynamic libraries: not compiled with CUDA ??";
 fi
 # check that it was statically linked with SIRIUS
-if [[ $(nm pw.x | grep -i sirius) -gt "100" ]]; then
+if [[ $(nm pw.x | grep -i sirius | wc -l) -gt "100" ]]; then
     echo "OK: statically compiled with SIRIUS";
 else
     echo "WARNING: not compiled with SIRIUS ??";
