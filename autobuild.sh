@@ -8,8 +8,8 @@
 #SIRIUS_BRANCH=master  # most stable
 SIRIUS_BRANCH=develop
 QE_BRANCH=sirius  # this shouldn't change
-#SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.json
-SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
+#SIRIUS_PLATFORM_FILE=$PWD/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
+SIRIUS_PLATFORM_FILE=$PWD/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"  # "yes" or "no"
 SIRIUS_MAKE_APPS="no"       # "yes" or "no"
 
