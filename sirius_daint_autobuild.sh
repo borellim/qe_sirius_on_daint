@@ -28,6 +28,10 @@ echo "SIRIUS platform file: $SIRIUS_PLATFORM_FILE"
 echo "Compiling SIRIUS with '-Og -g': $SIRIUS_DEBUG_SYMBOLS"
 echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
 
+# Check that the platform file exists
+if [ ! -z $SIRIUS_PLATFORM_FILE ]; then
+    echo "Missing platform file for SIRIUS: exiting."
+fi
 
 # load/unload correct modules
 module unload PrgEnv-cray
