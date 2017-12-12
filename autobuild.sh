@@ -8,8 +8,8 @@
 #SIRIUS_BRANCH=master  # most stable
 SIRIUS_BRANCH=develop
 QE_BRANCH=sirius  # this shouldn't change
-#SIRIUS_PLATFORM_FILE=$PWD/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
-SIRIUS_PLATFORM_FILE=$PWD/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
+#SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.json
+SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"  # "yes" or "no"
 SIRIUS_MAKE_APPS="no"       # "yes" or "no"
 
@@ -27,9 +27,10 @@ echo "QE branch: $QE_BRANCH; SIRIUS branch: $SIRIUS_BRANCH"
 echo "SIRIUS platform file: $SIRIUS_PLATFORM_FILE"
 echo "Compiling SIRIUS with '-Og -g': $SIRIUS_DEBUG_SYMBOLS"
 echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
+echo "------------------------------"
 
 # Check that the platform file exists
-if [ ! -z $SIRIUS_PLATFORM_FILE ]; then
+if [ ! -f $SIRIUS_PLATFORM_FILE ]; then
     echo "Missing platform file for SIRIUS: exiting."
     exit
 fi
