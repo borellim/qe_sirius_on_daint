@@ -1,0 +1,26 @@
+{
+    "control" : {
+        "processing_unit" : "gpu",
+        "std_evp_solver_type" : "scalapack",
+        "gen_evp_solver_type" : "scalapack",
+        "#cyclic_block_size" : 24,
+        "#verbosity" : 1,
+        "#verification" : 0,
+        "#print_checksum" : true
+    },
+
+    "#iterative_solver" : {
+        "#energy_tolerance" : 1e-2,
+        "#residual_tolerance" : 1e-6,
+        "#num_steps" : 20,
+        "#subspace_size" : 4,
+        "type" : "exact",
+        "#converge_by_energy" : 1
+    },
+
+    "#mixer" : {
+        "# beta" : 0.35,
+        "# type" : "broyden2",
+        "# max_history" : 8
+    }
+}
