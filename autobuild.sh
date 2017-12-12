@@ -31,6 +31,7 @@ echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
 # Check that the platform file exists
 if [ ! -z $SIRIUS_PLATFORM_FILE ]; then
     echo "Missing platform file for SIRIUS: exiting."
+    exit
 fi
 
 # load/unload correct modules
