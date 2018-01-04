@@ -8,8 +8,8 @@
 #SIRIUS_BRANCH=master  # most stable
 SIRIUS_BRANCH=develop
 QE_BRANCH=sirius  # this shouldn't change
-#SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.json
-SIRIUS_PLATFORM_FILE=platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
+SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
+#SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"  # "yes" or "no"
 SIRIUS_MAKE_APPS="no"       # "yes" or "no"
 
@@ -23,7 +23,8 @@ START_PATH=$PWD
 
 echo "----- Building QE+SIRIUS -----"
 echo "Starting path: $START_PATH"
-echo "QE branch: $QE_BRANCH; SIRIUS branch: $SIRIUS_BRANCH" 
+echo "QE branch: $QE_BRANCH"
+echo "SIRIUS branch: $SIRIUS_BRANCH"
 echo "SIRIUS platform file: $SIRIUS_PLATFORM_FILE"
 echo "Compiling SIRIUS with '-Og -g': $SIRIUS_DEBUG_SYMBOLS"
 echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
@@ -49,10 +50,11 @@ ftn --version
 
 # clone SIRIUS
 git clone --depth=1 --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS
+cp $SIRIUS_PLATFORM_FILE SIRIUS/platform_file.json
 cd SIRIUS
 
 # configure
-python configure.py $SIRIUS_PLATFORM_FILE
+python configure.py platform_file.json
 
 # compile with -g if requested
 if [ $SIRIUS_DEBUG_SYMBOLS == "yes" ]; then
