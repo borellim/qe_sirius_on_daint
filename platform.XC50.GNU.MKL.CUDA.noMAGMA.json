@@ -1,7 +1,7 @@
 {
     "comment"     : "MPI C++ compiler and options",
     "MPI_CXX"     : "CC",
-    "MPI_CXX_OPT" : "-std=c++11 -Wall -Wconversion -fopenmp -D__SCALAPACK -D__ELPA -D__GPU -I$(MKLROOT)/include/fftw/",
+    "MPI_CXX_OPT" : "-std=c++11 -Wall -Wconversion -fopenmp -D__SCALAPACK -D__ELPA -D__GPU -I$(MKLROOT)/include/fftw/ -I${ELPA_INCLUDE_PATH}",
     
     "comment"     : "MPI Fortran compiler and oprions",
     "MPI_FC"      : "ftn",
@@ -29,7 +29,7 @@
     "#comment"     : "location of MAGMA library",
     "#MAGMA_ROOT"  : "$(HOME)/src/daint/magma-2.2.0",
 
-    "SYSTEM_LIBS" : "$(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a -Wl,--start-group  $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_gnu_thread.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group -lpthread -lstdc++ -ldl",
+    "SYSTEM_LIBS" : "$(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a -Wl,--start-group  $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_gnu_thread.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a ${ELPA_LIB_PATH}/libelpa.a -Wl,--end-group -lpthread -lstdc++ -ldl",
 
     "install"     : ["spg", "gsl", "xc"]
 }

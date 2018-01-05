@@ -3,11 +3,13 @@
 
 #######################################################################
 
+set -e
+
 # Parameters:
 
 #SIRIUS_BRANCH=master  # most stable
 SIRIUS_BRANCH=develop
-QE_BRANCH=sirius  # this shouldn't change
+QE_BRANCH=sirius_fix_read_file  # this shouldn't change
 SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
 #SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"  # "yes" or "no"
@@ -16,7 +18,7 @@ SIRIUS_MAKE_APPS="no"       # "yes" or "no"
 #######################################################################
 
 function escape_slashes {
-    sed 's/\//\\\//g' 
+  sed 's/\//\\\//g'
 }
 
 START_PATH=$PWD
@@ -48,8 +50,29 @@ module list
 ftn --version
 #GNU Fortran (GCC) 5.3.0 20151204 (Cray Inc.)
 
+# find the location of installed ELPA
+export ELPA_ROOT=$(spack location -i elpa@2017%gcc)
+export ELPA_INCLUDE_PATH=$(echo ${ELPA_ROOT}/include/elpa-*/elpa/)
+export ELPA_LIB_PATH=${ELPA_ROOT}/lib/
+if [[ -z ${ELPA_ROOT// } ]]; then
+  echo "ELPA root path empty"
+  exit
+fi
+if [[ ! -f ${ELPA_INCLUDE_PATH}/elpa_constants.h ]]; then
+  echo "\"elpa_constants.h\" not found in ${ELPA_INCLUDE_PATH}"
+  exit
+fi
+if [[ ! -f ${ELPA_LIB_PATH}/libelpa.a ]]; then
+  echo "\"libelpa.a\" not found in ${ELPA_LIB_PATH}"
+  exit
+fi
+echo "ELPA found at: $ELPA_ROOT"
+
 # clone SIRIUS
-git clone --depth=1 --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS
+git clone --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS # FIXME --depth=1
+cd SIRIUS
+git checkout 5e0122dc38f48079d464143007d79c9bc5c1b6dd # !! FIXME !!
+cd ..
 cp $SIRIUS_PLATFORM_FILE SIRIUS/platform_file.json
 cd SIRIUS
 
@@ -70,9 +93,11 @@ fi
 
 # clone the SIRIUS-enabled fork of QuantumESPRESSO, correct branch
 cd $START_PATH
-git clone --depth=1 --single-branch --branch sirius https://github.com/electronic-structure/q-e.git
+#git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e.git
+git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git # FIXME
 cd q-e
-
+#git checkout 2aa149d54f79a82acd0d975cb5d23241a18f3df7
+#
 # configure
 ./configure ARCH=cray-xt --enable-openmp --with-scalapack
 
