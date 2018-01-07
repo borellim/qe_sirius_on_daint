@@ -12,8 +12,10 @@ SIRIUS_BRANCH=develop
 QE_BRANCH=sirius_fix_read_file  # this shouldn't change
 SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
 #SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
-SIRIUS_DEBUG_SYMBOLS="yes"  # "yes" or "no"
-SIRIUS_MAKE_APPS="no"       # "yes" or "no"
+SIRIUS_DEBUG_SYMBOLS="yes"
+SIRIUS_DEBUG_MODE="no"
+SIRIUS_GLIBCXX_DEBUG="no"
+SIRIUS_MAKE_APPS="no"
 
 #######################################################################
 
@@ -29,6 +31,8 @@ echo "QE branch: $QE_BRANCH"
 echo "SIRIUS branch: $SIRIUS_BRANCH"
 echo "SIRIUS platform file: $SIRIUS_PLATFORM_FILE"
 echo "Compiling SIRIUS with '-Og -g': $SIRIUS_DEBUG_SYMBOLS"
+echo "Compiling SIRIUS in debug/unoptimized mode: $SIRIUS_DEBUG_MODE"
+echo "Compiling SIRIUS with -D_GLIBCXX_DEBUG: $SIRIUS_GLIBCXX_DEBUG"
 echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
 echo "------------------------------"
 
@@ -84,6 +88,16 @@ if [ $SIRIUS_DEBUG_SYMBOLS == "yes" ]; then
     sed -i "s/BASIC_CXX_OPT = -O3/BASIC_CXX_OPT = -Og -g/g" make.inc
 fi
 
+# compile in debug mode if requested (-O1 -g -ggdb, and without -DNDEBUG)
+if [ $SIRIUS_DEBUG_MODE == "yes" ]; then
+    sed -i "s/debug = false/debug = true/" make.inc
+fi
+
+# add _D_GLIBCXX_DEBUG if requested
+if [ $SIRIUS_GLIBCXX_DEBUG == "yes" ]; then
+    sed -i "s/BASIC_CXX_OPT =/BASIC_CXX_OPT = -D_GLIBCXX_DEBUG /g" make.inc
+fi
+
 # make SIRIUS
 if [ $SIRIUS_MAKE_APPS == "no" ]; then
   make packages sirius
@@ -105,7 +119,8 @@ cd q-e
 cd $START_PATH/SIRIUS/src
 SIRIUS_LD_LIBS=$(make showlibs | sed 's/List of libraries for linking with the Fortran code://g')
 cd $START_PATH/q-e
-#sed -i "/TEXT_TO_BE_REPLACED/c\REPLACEMENT" file
+#sed -i "/TEXT_TO_MATCH/c\REPLACEMENT" file
+# NB: c\ means to replace a whole line
 sed -i "/DFLAGS         =/c\DFLAGS         =  -D__OPENMP -D__FFTW -D__OLDXML -D__MPI -D__SCALAPACK -D__SIRIUS -I$(echo ${START_PATH}/SIRIUS/src | escape_slashes)" make.inc  # NB: -D__ELPA should also be here, but it's temporarily broken!
 sed -i "s/gfortran/ftn/g" make.inc
 sed -i "/LD_LIBS        =/c\LD_LIBS        = $(echo ${SIRIUS_LD_LIBS} | escape_slashes)" make.inc
