@@ -9,7 +9,7 @@ set -e
 
 #SIRIUS_BRANCH=master  # most stable
 SIRIUS_BRANCH=develop
-QE_BRANCH=sirius_fix_read_file  # this shouldn't change
+QE_BRANCH=sirius  # this shouldn't change
 SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
 #SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"
@@ -75,10 +75,7 @@ fi
 echo "ELPA found at: $ELPA_ROOT"
 
 # clone SIRIUS
-git clone --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS # FIXME --depth=1
-cd SIRIUS
-git checkout 5e0122dc38f48079d464143007d79c9bc5c1b6dd # !! FIXME !!
-cd ..
+git clone --depth=1 --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS
 cp $SIRIUS_PLATFORM_FILE SIRIUS/platform_file.json
 cd SIRIUS
 
@@ -109,12 +106,9 @@ fi
 
 # clone the SIRIUS-enabled fork of QuantumESPRESSO, correct branch
 cd $START_PATH
-#git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e.git
-git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git # FIXME
+git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e.git
+#git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git
 cd q-e
-#git checkout 2aa149d54f79a82acd0d975cb5d23241a18f3df7
-#
-# configure
 ./configure ARCH=cray-xt --enable-openmp --with-scalapack
 
 # change some stuff in q-e/make.inc, but first get the list of libraries for linking with the SIRIUS Fortran code
