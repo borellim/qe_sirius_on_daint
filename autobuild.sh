@@ -36,7 +36,7 @@ echo "Compiling SIRIUS with -D_GLIBCXX_DEBUG: $SIRIUS_GLIBCXX_DEBUG"
 echo "Also compiling SIRIUS mini-apps: $SIRIUS_MAKE_APPS"
 echo "------------------------------"
 printf "Press ENTER to proceed"
-read REPLY 
+read REPLY
 
 # Check that the platform file exists
 if [ ! -f $SIRIUS_PLATFORM_FILE ]; then

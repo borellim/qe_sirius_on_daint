@@ -1,8 +1,10 @@
-# How to use QE+SIRIUS
+## How to use QE+SIRIUS
 
-After compiling with `sirius_daint_autobuild.sh`, the executable is in $START_PATH/q-e/pw.x as expected; but mind the warnings below.
+**NOTE**: The code will try to use spack commands to locate and use ELPA. Please load the spack environment before running `autobuild.sh`. 
 
-## Suggested prepend script for aiida code setup:
+After compiling with `autobuild.sh`, the executable is in `$START_PATH/q-e/pw.x` as expected; but mind the warnings below.
+
+### Suggested prepend script for aiida code setup:
 
 ```
 export CRAY_CUDA_MPS=1 # allows sharing the GPU between MPI processes;
@@ -14,23 +16,23 @@ export OMP_NUM_THREADS=2
 export SDDK_BLOCK_SIZE=512 # tuning parameter for the SIRIUS Data Distribution Kit
 ```
 
-## Parallelization:
+### Parallelization:
 
 Do not necessarily use 1 MPI rank per core:
-- we are using OpenMP
-- the bulk of the work is (our should be) done by the GPUs: more concurrent ranks are supported, but the number needs to be tweaked
-  - when using AiiDA (example): `params['pw_input'].pop('automatic_parallelization')`
+- we are using OpenMP, and at least 2 OMP threads are needed;
+- the bulk of the work is (our should be) done by the GPUs: more concurrent ranks are supported, but the number needs to be tweaked;
+- when using AiiDA (example): `params['pw_input'].pop('automatic_parallelization')`
 
-## Usage notes:
+### Usage notes:
 
 Add flags `-sirius -sirius_cfg [config_file]`:
 - when using AiiDA (example): `params['pw_settings'] = {'cmdline':['-sirius', '-sirius_cfg', '/users/mborelli/sirius_cfg/config.json']} `
 
-Known issue: wf_collect must be false
+Known issue: `wf_collect` must be false
 - AiiDA: `params['pw_parameters']['CONTROL']['wf_collect'] = False`
 
 
-# To save space after compilation
+## To save space after compilation
 
 You can save q-e/src/pw.x and delete everything else.
 
