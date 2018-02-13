@@ -57,8 +57,8 @@ ftn --version
 #GNU Fortran (GCC) 5.3.0 20151204 (Cray Inc.)
 
 # find the location of installed ELPA
-export ELPA_ROOT=$(spack location -i elpa@2017%gcc)
-export ELPA_INCLUDE_PATH=$(echo ${ELPA_ROOT}/include/elpa-*/elpa/)
+export ELPA_ROOT=$(spack location -i elpa@2017+openmp %gcc)
+export ELPA_INCLUDE_PATH=$(echo ${ELPA_ROOT}/include/elpa_openmp*/elpa/)
 export ELPA_LIB_PATH=${ELPA_ROOT}/lib/
 if [[ -z ${ELPA_ROOT// } ]]; then
   echo "ELPA root path empty"
@@ -68,7 +68,7 @@ if [[ ! -f ${ELPA_INCLUDE_PATH}/elpa_constants.h ]]; then
   echo "\"elpa_constants.h\" not found in ${ELPA_INCLUDE_PATH}"
   exit
 fi
-if [[ ! -f ${ELPA_LIB_PATH}/libelpa.a ]]; then
+if [[ ! -f ${ELPA_LIB_PATH}/libelpa_openmp.a ]]; then
   echo "\"libelpa.a\" not found in ${ELPA_LIB_PATH}"
   exit
 fi
@@ -96,6 +96,10 @@ fi
 if [ $SIRIUS_GLIBCXX_DEBUG == "yes" ]; then
     sed -i "s/BASIC_CXX_OPT =/BASIC_CXX_OPT = -D_GLIBCXX_DEBUG /g" make.inc
 fi
+
+# Unfortunately we also need to patch make.inc for the ELPA paths
+sed -i 's/$(ELPA_ROOT_PLACEHOLDER)\/elpa/'"$(echo ${ELPA_INCLUDE_PATH} | escape_slashes)/g" make.inc
+sed -i 's/$(ELPA_ROOT_PLACEHOLDER)\/.libs/'"$(echo ${ELPA_LIB_PATH} | escape_slashes)/g" make.inc
 
 # make SIRIUS
 if [ $SIRIUS_MAKE_APPS == "no" ]; then

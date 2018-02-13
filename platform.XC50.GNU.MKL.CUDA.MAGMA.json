@@ -14,7 +14,7 @@
 
     "MPI_CXX"     : "CC",
     "comment"     : "your MPI C++ compiler",
-    "MPI_CXX_OPT" : "-std=c++11 -Wall -Wconversion -fopenmp -D__SCALAPACK  -D__GPU -I$(MKLROOT)/include/fftw/",
+    "MPI_CXX_OPT" : "-std=c++11 -Wall -Wconversion -fopenmp -D__SCALAPACK -D__ELPA -D__GPU -D__MAGMA -I$(MKLROOT)/include/fftw/",
     "comment"     : "compiler options for the SIRIUS library",
     
     "MPI_FC"      : "ftn",
@@ -39,8 +39,8 @@
     "NVCC"        : "nvcc",
     "CUDA_OPT"    : "-arch=sm_60 -m64 -DNDEBUG",
     
-    "#comment"     : "location of MAGMA library",
-    "#MAGMA_ROOT"  : "$(HOME)/src/daint/magma-2.3.0",
+    "comment"     : "location of MAGMA library",
+    "MAGMA_ROOT"  : "$(HOME)/src/daint/magma-2.3.0",
 
     "ELPA_ROOT"   : "$(ELPA_ROOT_PLACEHOLDER)",
 
