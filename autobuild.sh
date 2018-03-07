@@ -84,7 +84,7 @@ python configure.py platform_file.json
 
 # compile with -g if requested
 if [ $SIRIUS_DEBUG_SYMBOLS == "yes" ]; then
-    sed -i "s/BASIC_CXX_OPT = -O3/BASIC_CXX_OPT = -Og -g/g" make.inc
+    sed -i "s/BASIC_CXX_OPT = -O3/BASIC_CXX_OPT = -Og -g -ggdb/g" make.inc
 fi
 
 # compile in debug mode if requested (-O1 -g -ggdb, and without -DNDEBUG)
