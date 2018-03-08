@@ -1,4 +1,15 @@
 {
+    "comment"     : [
+        "Non-exhaustive list of required packages (Ubuntu 16.04):",
+        "openmpi-bin, openmpi-common, libopenmpi-dev",
+        "libblas, libblas-dev",
+        "liblapack, liblapack-dev",
+        "libscalapack, libscalapack-openmpi1, libscalapack-mpi-dev",
+        "libblacs, libblacs-mpi-dev, libblacs-openmpi1",
+        
+        "ELPA and MAGMA are compiled manually"
+    ],
+    
     "comment"     : "MPI C++ compiler and options",
     "MPI_CXX"     : "mpic++",
     "MPI_CXX_OPT" : "-std=c++11 -Wall -Wconversion -fopenmp -D__SCALAPACK -D__ELPA ",
