@@ -130,6 +130,11 @@ sed -i "/BLAS_LIBS      =/c\BLAS_LIBS      =" make.inc
 sed -i "/LAPACK_LIBS    =/c\LAPACK_LIBS    =" make.inc
 sed -i "/BLAS_LIBS_SWITCH =/c\BLAS_LIBS_SWITCH = external" make.inc
 sed -i "/LAPACK_LIBS_SWITCH =/c\LAPACK_LIBS_SWITCH = external" make.inc
+# IMPORTANT NOTES FOR COMPILING ON OTHER SYSTEMS!!:
+# - You may also need to add "-lmpi_cxx" to LD_LIBS, because the linker needs both the Fortran and C++ MPI bindings.
+#   By default, the linker is mpif90, which already has the Fortran MPI bindings, but not the C++ ones.
+#   On Daint, the ftn wrapper appears to also have the C++ bindings.
+# - The names of the compilers and the linker might already be fine as autodetected (they are on my laptop).
 
 # make PW
 make pw
