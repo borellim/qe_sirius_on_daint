@@ -5,11 +5,13 @@
 
 set -e
 
+. ~/spack/spack/share/spack/setup-env.sh
+
 # Parameters:
 
 #SIRIUS_BRANCH=master  # most stable
-SIRIUS_BRANCH=develop
-QE_BRANCH=sirius  # this shouldn't change
+SIRIUS_BRANCH=master
+QE_BRANCH=qe_sirius
 SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
 #SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
 SIRIUS_DEBUG_SYMBOLS="yes"
@@ -45,12 +47,15 @@ if [ ! -f $SIRIUS_PLATFORM_FILE ]; then
 fi
 
 # load/unload correct modules
+module load daint-gpu
 module unload PrgEnv-cray
 module load PrgEnv-gnu  # GNU programming environment (incl. compiler)
 module unload cray-libsci
 module load intel       # to get MKL
 module load cray-hdf5
 module load cudatoolkit
+module load craype-accel-nvidia60
+#module load perftools-lite
 module list
 
 ftn --version
@@ -101,16 +106,21 @@ fi
 sed -i 's/$(ELPA_ROOT_PLACEHOLDER)\/elpa/'"$(echo ${ELPA_INCLUDE_PATH} | escape_slashes)/g" make.inc
 sed -i 's/$(ELPA_ROOT_PLACEHOLDER)\/.libs/'"$(echo ${ELPA_LIB_PATH} | escape_slashes)/g" make.inc
 
+#printf "Press ENTER to proceed"
+#read REPLY
+
 # make SIRIUS
-if [ $SIRIUS_MAKE_APPS == "no" ]; then
-  make packages sirius
-else
+#module unload perftools-lite
+make packages
+#module load perftools-lite
+make sirius
+if [ $SIRIUS_MAKE_APPS != "no" ]; then
   make all
 fi
 
 # clone the SIRIUS-enabled fork of QuantumESPRESSO, correct branch
 cd $START_PATH
-git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e.git
+git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e-sirius.git
 #git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git
 printf "Press ENTER to proceed"
 read REPLY
@@ -136,7 +146,11 @@ sed -i "/LAPACK_LIBS_SWITCH =/c\LAPACK_LIBS_SWITCH = external" make.inc
 #   On Daint, the ftn wrapper appears to also have the C++ bindings.
 # - The names of the compilers and the linker might already be fine as autodetected (they are on my laptop).
 
+#printf "Press ENTER to proceed"
+#read REPLY
+
 # make PW
+#module load perftools-lite
 make pw
 
 # check that it is using the correct dynamic libraries (nvidia, cublas, ..)
