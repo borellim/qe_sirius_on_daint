@@ -120,7 +120,7 @@ fi
 
 # clone the SIRIUS-enabled fork of QuantumESPRESSO, correct branch
 cd $START_PATH
-git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e-sirius.git
+git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e-sirius.git q-e
 #git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git
 printf "Press ENTER to proceed"
 read REPLY
