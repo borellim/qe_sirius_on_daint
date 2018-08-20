@@ -1,6 +1,8 @@
 #######################################################################
 # QE+SIRIUS (only PW) automatic compilation script for Piz Daint
 # Author: Marco Borelli, with a lot of help from Anton Kozhevnikov
+#
+# NOTE: run this script from one folder up, not from the same folder.
 #######################################################################
 
 set -e
