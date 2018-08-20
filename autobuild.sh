@@ -1,16 +1,16 @@
+#######################################################################
 # QE+SIRIUS (only PW) automatic compilation script for Piz Daint
 # Author: Marco Borelli, with a lot of help from Anton Kozhevnikov
-
 #######################################################################
 
 set -e
 
 . ~/spack/spack/share/spack/setup-env.sh
 
-# Parameters:
+# Tunable parameters:
 
 #SIRIUS_BRANCH=master  # most stable
-SIRIUS_BRANCH=master
+SIRIUS_BRANCH=develop
 QE_BRANCH=qe_sirius
 SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.json
 #SIRIUS_PLATFORM_FILE=qe_sirius_on_daint/platform.XC50.GNU.MKL.CUDA.noMAGMA.noELPA.json
@@ -83,6 +83,10 @@ echo "ELPA found at: $ELPA_ROOT"
 git clone --depth=1 --single-branch --branch $SIRIUS_BRANCH https://github.com/electronic-structure/SIRIUS
 cp $SIRIUS_PLATFORM_FILE SIRIUS/platform_file.json
 cd SIRIUS
+#git checkout 535c2525e74956e1336db3f1e7d1069b56b688e8
+
+# if tddft.org is down: use a pre-downloaded version of libxc
+#sed -i "s/$(echo 'http://www.tddft.org/programs/octopus/down.php?file=libxc/libxc-3.0.0.tar.gz' | escape_slashes)/$(echo '/project/s836/mborelli/libxc-3.0.0.tar.gz' | escape_slashes)/g" configure.py
 
 # configure
 python configure.py platform_file.json
@@ -121,7 +125,6 @@ fi
 # clone the SIRIUS-enabled fork of QuantumESPRESSO, correct branch
 cd $START_PATH
 git clone --depth=1 --single-branch --branch $QE_BRANCH https://github.com/electronic-structure/q-e-sirius.git q-e
-#git clone --depth=1 --single-branch --branch $QE_BRANCH git@github.com:borellim/q-e.git
 printf "Press ENTER to proceed"
 read REPLY
 cd q-e
@@ -132,7 +135,7 @@ cd $START_PATH/SIRIUS/src
 SIRIUS_LD_LIBS=$(make showlibs | sed 's/List of libraries for linking with the Fortran code://g')
 cd $START_PATH/q-e
 #sed -i "/TEXT_TO_MATCH/c\REPLACEMENT" file
-# NB: c\ means to replace a whole line
+# NB: c\ replaces a whole line
 sed -i "/DFLAGS         =/c\DFLAGS         =  -D__OPENMP -D__FFTW -D__OLDXML -D__MPI -D__SCALAPACK -D__SIRIUS -I$(echo ${START_PATH}/SIRIUS/src | escape_slashes)" make.inc  # NB: -D__ELPA should also be here, but it's temporarily broken!
 sed -i "s/gfortran/ftn/g" make.inc
 sed -i "/LD_LIBS        =/c\LD_LIBS        = $(echo ${SIRIUS_LD_LIBS} | escape_slashes)" make.inc
@@ -167,7 +170,6 @@ if [[ $(nm pw.x | grep -i sirius | wc -l) -gt "100" ]]; then
 else
     echo "WARNING: not compiled with SIRIUS ??";
 fi
-
 
 # ---- DONE ----
 
